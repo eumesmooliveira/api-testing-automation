@@ -1,0 +1,23 @@
+{
+  "name": "api-testing-automation",
+  "version": "1.0.0",
+  "description": "API testing automation portfolio project using Postman, Newman and JavaScript",
+  "scripts": {
+    "test:api": "newman run collections/api-testing-automation.postman_collection.json -e environments/dev.postman_environment.json",
+    "test:report": "newman run collections/api-testing-automation.postman_collection.json -e environments/dev.postman_environment.json -r cli,htmlextra --reporter-htmlextra-export reports/report.html"
+  },
+  "keywords": [
+    "api-testing",
+    "postman",
+    "newman",
+    "qa",
+    "automation"
+  ],
+  "author": "Felipe de Oliveira",
+  "license": "MIT",
+  "type": "commonjs",
+  "devDependencies": {
+    "newman": "^6.2.2",
+    "newman-reporter-htmlextra": "^1.23.1"
+  }
+}

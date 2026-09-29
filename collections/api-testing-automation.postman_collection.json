@@ -1,0 +1,882 @@
+{
+  "info": {
+    "_postman_id": "27ba4acd-e917-483f-973b-b20e8c5c1033",
+    "name": "API Testing Automation - DummyJSON",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54769533",
+    "_collection_link": "https://go.postman.co/collection/54769533-27ba4acd-e917-483f-973b-b20e8c5c1033?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "CT01 - Listar produtos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code deve ser 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Resposta deve ser JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Resposta deve conter a lista de produtos\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"products\");\r\n    pm.expect(response.products).to.be.an(\"array\");\r\n    pm.expect(response.products.length).to.be.above(0);\r\n});\r\n\r\npm.test(\"Produtos devem conter campos essenciais\", function () {\r\n    const response = pm.response.json();\r\n\r\n    response.products.forEach(function (product) {\r\n        pm.expect(product).to.have.property(\"id\");\r\n        pm.expect(product).to.have.property(\"title\");\r\n        pm.expect(product).to.have.property(\"price\");\r\n        pm.expect(product).to.have.property(\"category\");\r\n    });\r\n});\r\n\r\npm.test(\"Tempo de resposta deve ser menor que 2000ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(2000);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CT02 - Buscar produto por ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code deve ser 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Resposta deve ser JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Produto deve possuir ID 1\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response.id).to.eql(1);\r\n});\r\n\r\npm.test(\"Produto deve conter campos essenciais\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"id\");\r\n    pm.expect(response).to.have.property(\"title\");\r\n    pm.expect(response).to.have.property(\"price\");\r\n    pm.expect(response).to.have.property(\"category\");\r\n});\r\n\r\npm.test(\"Preço deve ser maior que zero\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response.price).to.be.above(0);\r\n});\r\n\r\npm.test(\"Tempo de resposta deve ser menor que 2000ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(2000);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/products/{{productId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products",
+                "{{productId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CT03 - Buscar produto inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code deve ser 404\", function () {\r\n    pm.response.to.have.status(404);\r\n});\r\n\r\npm.test(\"Resposta deve ser JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Resposta deve conter mensagem de produto não encontrado\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"message\");\r\n    pm.expect(response.message).to.include(\"Product with id\");\r\n    pm.expect(response.message).to.include(\"not found\");\r\n});\r\n\r\npm.test(\"Mensagem deve referenciar o ID consultado\", function () {\r\n    const response = pm.response.json();\r\n    const invalidProductId = pm.environment.get(\"invalidProductId\");\r\n\r\n    pm.expect(response.message).to.include(invalidProductId);\r\n});\r\n\r\npm.test(\"Tempo de resposta deve ser menor que 2000ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(2000);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/products/{{invalidProductId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products",
+                "{{invalidProductId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CT04 - Buscar produtos por termo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code deve ser 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Resposta deve ser JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Resposta deve conter lista de produtos\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"products\");\r\n    pm.expect(response.products).to.be.an(\"array\");\r\n});\r\n\r\npm.test(\"Busca deve retornar pelo menos um produto\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response.products.length).to.be.above(0);\r\n});\r\n\r\npm.test(\"Produtos retornados devem conter campos essenciais\", function () {\r\n    const response = pm.response.json();\r\n\r\n    response.products.forEach(function (product) {\r\n        pm.expect(product).to.have.property(\"id\");\r\n        pm.expect(product).to.have.property(\"title\");\r\n        pm.expect(product).to.have.property(\"price\");\r\n    });\r\n});\r\n\r\npm.test(\"Tempo de resposta deve ser menor que 2000ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(2000);\r\n});\r\n\r\npm.test(\"Produtos retornados devem estar relacionados ao termo pesquisado\", function () {\r\n    const response = pm.response.json();\r\n    const searchTerm = pm.environment.get(\"searchTerm\").toLowerCase();\r\n\r\n    const matches = response.products.filter(function (product) {\r\n        const title = product.title ? product.title.toLowerCase() : \"\";\r\n        const description = product.description ? product.description.toLowerCase() : \"\";\r\n        const category = product.category ? product.category.toLowerCase() : \"\";\r\n\r\n        return (\r\n            title.includes(searchTerm) ||\r\n            description.includes(searchTerm) ||\r\n            category.includes(searchTerm)\r\n        );\r\n    });\r\n\r\n    pm.expect(matches.length).to.be.above(0);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/products/search?q={{searchTerm}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "{{searchTerm}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CT05 - Criar produto",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code deve ser 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\npm.test(\"Resposta deve ser JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Produto criado deve possuir ID\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"id\");\r\n    pm.expect(response.id).to.be.a(\"number\");\r\n});\r\n\r\npm.test(\"Produto criado deve manter os dados enviados\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response.title).to.eql(\r\n        pm.environment.get(\"dynamicTitle\")\r\n    );\r\n\r\n    pm.expect(response.description).to.eql(\r\n        pm.environment.get(\"dynamicDescription\")\r\n    );\r\n\r\n    pm.expect(response.price).to.eql(\r\n        Number(pm.environment.get(\"dynamicPrice\"))\r\n    );\r\n\r\n    pm.expect(response.category).to.eql(\r\n        pm.environment.get(\"dynamicCategory\")\r\n    );\r\n});\r\n\r\npm.test(\"Tempo de resposta deve ser menor que 2000ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(2000);\r\n});"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const timestamp = Date.now();\r\n\r\npm.environment.set(\"dynamicTitle\", `QA Product ${timestamp}`);\r\npm.environment.set(\"dynamicPrice\", 199.90);\r\npm.environment.set(\"dynamicCategory\", \"testing\");\r\npm.environment.set(\r\n    \"dynamicDescription\",\r\n    \"Product created for API testing automation\"\r\n);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"{{dynamicTitle}}\",\r\n  \"description\": \"{{dynamicDescription}}\",\r\n  \"price\": {{dynamicPrice}},\r\n  \"category\": \"{{dynamicCategory}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/products/add",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CT06 - Atualizar produto",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code deve ser 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Resposta deve ser JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Produto atualizado deve possuir o ID solicitado\", function () {\r\n    const response = pm.response.json();\r\n    const productId = Number(pm.environment.get(\"productId\"));\r\n\r\n    pm.expect(response.id).to.eql(productId);\r\n});\r\n\r\npm.test(\"Título deve ser atualizado corretamente\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response.title).to.eql(\"QA Product Updated\");\r\n});\r\n\r\npm.test(\"Preço deve ser atualizado corretamente\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response.price).to.eql(249.9);\r\n});\r\n\r\npm.test(\"Resposta deve manter campos essenciais do produto\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"id\");\r\n    pm.expect(response).to.have.property(\"title\");\r\n    pm.expect(response).to.have.property(\"price\");\r\n    pm.expect(response).to.have.property(\"category\");\r\n});\r\n\r\npm.test(\"Tempo de resposta deve ser menor que 2000ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(2000);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"QA Product Updated\",\r\n  \"price\": 249.90\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/products/{{productId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products",
+                "{{productId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CT07 - Excluir produto",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code deve ser 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Resposta deve ser JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Produto excluído deve possuir o ID solicitado\", function () {\r\n    const response = pm.response.json();\r\n    const productId = Number(pm.environment.get(\"productId\"));\r\n\r\n    pm.expect(response.id).to.eql(productId);\r\n});\r\n\r\npm.test(\"Produto deve estar marcado como excluído\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"isDeleted\");\r\n    pm.expect(response.isDeleted).to.eql(true);\r\n});\r\n\r\npm.test(\"Resposta deve informar a data da exclusão\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"deletedOn\");\r\n    pm.expect(response.deletedOn).to.be.a(\"string\");\r\n    pm.expect(response.deletedOn.length).to.be.above(0);\r\n});\r\n\r\npm.test(\"Tempo de resposta deve ser menor que 2000ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(2000);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/products/{{productId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products",
+                "{{productId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "CT13 - Listar usuários",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code deve ser 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Resposta deve ser JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Resposta deve conter lista de usuários\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"users\");\r\n    pm.expect(response.users).to.be.an(\"array\");\r\n    pm.expect(response.users.length).to.be.above(0);\r\n});\r\n\r\npm.test(\"Usuários devem conter campos essenciais\", function () {\r\n    const response = pm.response.json();\r\n\r\n    response.users.forEach(function (user) {\r\n        pm.expect(user).to.have.property(\"id\");\r\n        pm.expect(user).to.have.property(\"firstName\");\r\n        pm.expect(user).to.have.property(\"lastName\");\r\n        pm.expect(user).to.have.property(\"email\");\r\n        pm.expect(user).to.have.property(\"username\");\r\n    });\r\n});\r\n\r\npm.test(\"Tempo de resposta deve ser menor que 2000ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(2000);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CT14 - Buscar usuário por ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code deve ser 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Resposta deve ser JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Usuário retornado deve possuir o ID solicitado\", function () {\r\n    const response = pm.response.json();\r\n    const userId = Number(pm.environment.get(\"userId\"));\r\n\r\n    pm.expect(response.id).to.eql(userId);\r\n});\r\n\r\npm.test(\"Usuário deve conter campos essenciais\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"id\");\r\n    pm.expect(response).to.have.property(\"firstName\");\r\n    pm.expect(response).to.have.property(\"lastName\");\r\n    pm.expect(response).to.have.property(\"email\");\r\n    pm.expect(response).to.have.property(\"username\");\r\n});\r\n\r\npm.test(\"E-mail deve possuir formato válido\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response.email).to.match(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/);\r\n});\r\n\r\npm.test(\"Tempo de resposta deve ser menor que 2000ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(2000);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CT15 - Buscar usuário inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code deve ser 404\", function () {\r\n    pm.response.to.have.status(404);\r\n});\r\n\r\npm.test(\"Resposta deve ser JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Resposta deve informar usuário não encontrado\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"message\");\r\n    pm.expect(response.message).to.include(\"User with id\");\r\n    pm.expect(response.message).to.include(\"not found\");\r\n});\r\n\r\npm.test(\"Mensagem deve referenciar o ID consultado\", function () {\r\n    const response = pm.response.json();\r\n    const invalidUserId = pm.environment.get(\"invalidUserId\");\r\n\r\n    pm.expect(response.message).to.include(invalidUserId);\r\n});\r\n\r\npm.test(\"Tempo de resposta deve ser menor que 2000ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(2000);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{invalidUserId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{invalidUserId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CT16 - Buscar usuários por termo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code deve ser 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Resposta deve ser JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Resposta deve conter lista de usuários\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"users\");\r\n    pm.expect(response.users).to.be.an(\"array\");\r\n});\r\n\r\npm.test(\"Busca deve retornar pelo menos um usuário\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response.users.length).to.be.above(0);\r\n});\r\n\r\npm.test(\"Usuários retornados devem conter campos essenciais\", function () {\r\n    const response = pm.response.json();\r\n\r\n    response.users.forEach(function (user) {\r\n        pm.expect(user).to.have.property(\"id\");\r\n        pm.expect(user).to.have.property(\"firstName\");\r\n        pm.expect(user).to.have.property(\"lastName\");\r\n        pm.expect(user).to.have.property(\"email\");\r\n        pm.expect(user).to.have.property(\"username\");\r\n    });\r\n});\r\n\r\npm.test(\"Resultados devem estar relacionados ao termo pesquisado\", function () {\r\n    const response = pm.response.json();\r\n    const searchTerm = pm.environment.get(\"userSearchTerm\").toLowerCase();\r\n\r\n    const matches = response.users.filter(function (user) {\r\n        const firstName = user.firstName ? user.firstName.toLowerCase() : \"\";\r\n        const lastName = user.lastName ? user.lastName.toLowerCase() : \"\";\r\n        const username = user.username ? user.username.toLowerCase() : \"\";\r\n        const email = user.email ? user.email.toLowerCase() : \"\";\r\n\r\n        return (\r\n            firstName.includes(searchTerm) ||\r\n            lastName.includes(searchTerm) ||\r\n            username.includes(searchTerm) ||\r\n            email.includes(searchTerm)\r\n        );\r\n    });\r\n\r\n    pm.expect(matches.length).to.be.above(0);\r\n});\r\n\r\npm.test(\"Tempo de resposta deve ser menor que 2000ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(2000);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/search?q={{userSearchTerm}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "{{userSearchTerm}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CT17 - Criar usuário",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code deve ser 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\npm.test(\"Resposta deve ser JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Usuário criado deve possuir ID\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"id\");\r\n    pm.expect(response.id).to.be.a(\"number\");\r\n});\r\n\r\npm.test(\"Usuário criado deve manter os dados enviados\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response.firstName).to.eql(\"Felipe\");\r\n    pm.expect(response.lastName).to.eql(\"de Oliveira\");\r\n    pm.expect(response.age).to.eql(33);\r\n\r\n    pm.expect(response.email).to.eql(\r\n        pm.environment.get(\"dynamicUserEmail\")\r\n    );\r\n\r\n    pm.expect(response.username).to.eql(\r\n        pm.environment.get(\"dynamicUsername\")\r\n    );\r\n});\r\n\r\npm.test(\"E-mail retornado deve possuir formato válido\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response.email).to.match(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/);\r\n});\r\n\r\npm.test(\"Tempo de resposta deve ser menor que 2000ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(2000);\r\n});"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const timestamp = Date.now();\r\n\r\npm.environment.set(\"dynamicUserEmail\", `felipe.qa.${timestamp}@example.com`);\r\npm.environment.set(\"dynamicUsername\", `felipeqa${timestamp}`);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"firstName\": \"Felipe\",\r\n  \"lastName\": \"de Oliveira\",\r\n  \"age\": 33,\r\n  \"email\": \"{{dynamicUserEmail}}\",\r\n  \"username\": \"{{dynamicUsername}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/add",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CT18 — Atualizar usuário",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code deve ser 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Resposta deve ser JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Usuário atualizado deve possuir o ID solicitado\", function () {\r\n    const response = pm.response.json();\r\n    const userId = Number(pm.environment.get(\"userId\"));\r\n\r\n    pm.expect(response.id).to.eql(userId);\r\n});\r\n\r\npm.test(\"Nome deve ser atualizado corretamente\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response.firstName).to.eql(\"Felipe QA\");\r\n});\r\n\r\npm.test(\"Idade deve ser atualizada corretamente\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response.age).to.eql(34);\r\n});\r\n\r\npm.test(\"Resposta deve manter campos essenciais do usuário\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"id\");\r\n    pm.expect(response).to.have.property(\"firstName\");\r\n    pm.expect(response).to.have.property(\"lastName\");\r\n    pm.expect(response).to.have.property(\"email\");\r\n    pm.expect(response).to.have.property(\"username\");\r\n});\r\n\r\npm.test(\"Tempo de resposta deve ser menor que 2000ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(2000);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"firstName\": \"Felipe QA\",\r\n  \"age\": 34\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CT19 — Excluir usuário",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code deve ser 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Resposta deve ser JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Usuário excluído deve possuir o ID solicitado\", function () {\r\n    const response = pm.response.json();\r\n    const userId = Number(pm.environment.get(\"userId\"));\r\n\r\n    pm.expect(response.id).to.eql(userId);\r\n});\r\n\r\npm.test(\"Usuário deve estar marcado como excluído\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"isDeleted\");\r\n    pm.expect(response.isDeleted).to.eql(true);\r\n});\r\n\r\npm.test(\"Resposta deve informar a data da exclusão\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"deletedOn\");\r\n    pm.expect(response.deletedOn).to.be.a(\"string\");\r\n    pm.expect(response.deletedOn.length).to.be.above(0);\r\n});\r\n\r\npm.test(\"Tempo de resposta deve ser menor que 2000ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(2000);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "CT08 - Login válido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code deve ser 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Resposta deve ser JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Resposta deve conter access token\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"accessToken\");\r\n    pm.expect(response.accessToken).to.be.a(\"string\");\r\n    pm.expect(response.accessToken.length).to.be.above(0);\r\n});\r\n\r\npm.test(\"Resposta deve conter refresh token\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"refreshToken\");\r\n    pm.expect(response.refreshToken).to.be.a(\"string\");\r\n    pm.expect(response.refreshToken.length).to.be.above(0);\r\n});\r\n\r\npm.test(\"Usuário autenticado deve ser o esperado\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response.username).to.eql(\"emilys\");\r\n    pm.expect(response.email).to.be.a(\"string\");\r\n});\r\n\r\npm.test(\"Tempo de resposta deve ser menor que 2000ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(2000);\r\n});\r\n\r\nconst response = pm.response.json();\r\n\r\npm.environment.set(\"accessToken\", response.accessToken);\r\npm.environment.set(\"refreshToken\", response.refreshToken);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"emilys\",\r\n  \"password\": \"emilyspass\",\r\n  \"expiresInMins\": 30\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CT09 - Login inválido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code deve ser 400\", function () {\r\n    pm.response.to.have.status(400);\r\n});\r\n\r\npm.test(\"Resposta deve ser JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Resposta deve informar credenciais inválidas\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"message\");\r\n    pm.expect(response.message).to.eql(\"Invalid credentials\");\r\n});\r\n\r\npm.test(\"Resposta não deve conter access token\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.not.have.property(\"accessToken\");\r\n});\r\n\r\npm.test(\"Resposta não deve conter refresh token\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.not.have.property(\"refreshToken\");\r\n});\r\n\r\npm.test(\"Tempo de resposta deve ser menor que 2000ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(2000);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"emilys\",\r\n  \"password\": \"senha-incorreta\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CT10 - Login sem senha",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code deve ser 400\", function () {\r\n    pm.response.to.have.status(400);\r\n});\r\n\r\npm.test(\"Resposta deve ser JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Resposta deve informar que usuário e senha são obrigatórios\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"message\");\r\n    pm.expect(response.message).to.eql(\"Username and password required\");\r\n});\r\n\r\npm.test(\"Resposta não deve conter access token\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.not.have.property(\"accessToken\");\r\n});\r\n\r\npm.test(\"Resposta não deve conter refresh token\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.not.have.property(\"refreshToken\");\r\n});\r\n\r\npm.test(\"Tempo de resposta deve ser menor que 2000ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(2000);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"emilys\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CT11 - Validar usuário autenticado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code deve ser 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Resposta deve ser JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Resposta deve conter os dados do usuário autenticado\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"id\");\r\n    pm.expect(response).to.have.property(\"username\");\r\n    pm.expect(response).to.have.property(\"email\");\r\n    pm.expect(response).to.have.property(\"firstName\");\r\n    pm.expect(response).to.have.property(\"lastName\");\r\n});\r\n\r\npm.test(\"Usuário autenticado deve ser o esperado\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response.username).to.eql(\"emilys\");\r\n});\r\n\r\npm.test(\"Resposta deve conter informações de perfil\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"role\");\r\n    pm.expect(response).to.have.property(\"company\");\r\n});\r\n\r\npm.test(\"Tempo de resposta deve ser menor que 2000ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(2000);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CT12 - Token inválido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code deve ser 401\", function () {\r\n    pm.response.to.have.status(401);\r\n});\r\n\r\npm.test(\"Resposta deve ser JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Resposta deve informar token inválido ou expirado\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"message\");\r\n    pm.expect(response.message).to.eql(\"Invalid/Expired Token!\");\r\n});\r\n\r\npm.test(\"Tempo de resposta deve ser menor que 2000ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(2000);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "token-invalido-123456",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Negative Scenarios",
+      "item": [
+        {
+          "name": "CT20 - Criar produto sem título",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code deve ser 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\npm.test(\"Resposta deve ser JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Produto deve ser criado mesmo sem título\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"id\");\r\n    pm.expect(response).to.not.have.property(\"title\");\r\n});\r\n\r\npm.test(\"Dados enviados devem ser mantidos\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response.description).to.eql(\"Negative API test\");\r\n    pm.expect(response.price).to.eql(99.9);\r\n    pm.expect(response.category).to.eql(\"testing\");\r\n});\r\n\r\npm.test(\"Tempo de resposta deve ser menor que 2000ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(2000);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"description\": \"Negative API test\",\r\n  \"price\": 99.90,\r\n  \"category\": \"testing\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/products/add",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CT21 — Atualizar produto inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code deve ser 404\", function () {\r\n    pm.response.to.have.status(404);\r\n});\r\n\r\npm.test(\"Resposta deve ser JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Resposta deve informar produto não encontrado\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"message\");\r\n    pm.expect(response.message).to.include(\"Product with id\");\r\n    pm.expect(response.message).to.include(\"not found\");\r\n});\r\n\r\npm.test(\"Mensagem deve referenciar o ID consultado\", function () {\r\n    const response = pm.response.json();\r\n    const invalidProductId = pm.environment.get(\"invalidProductId\");\r\n\r\n    pm.expect(response.message).to.include(invalidProductId);\r\n});\r\n\r\npm.test(\"Tempo de resposta deve ser menor que 2000ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(2000);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Produto inexistente atualizado\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/products/{{invalidProductId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products",
+                "{{invalidProductId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CT22 - Criar usuário com e-mail inválido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code deve ser 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\npm.test(\"Resposta deve ser JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Usuário deve ser criado mesmo com e-mail inválido\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"id\");\r\n    pm.expect(response.email).to.eql(\"email-invalido\");\r\n});\r\n\r\npm.test(\"E-mail retornado deve permanecer com o valor enviado\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response.email).to.eql(\"email-invalido\");\r\n});\r\n\r\npm.test(\"Resposta deve manter os demais dados enviados\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response.firstName).to.eql(\"Felipe\");\r\n    pm.expect(response.lastName).to.eql(\"QA\");\r\n    pm.expect(response.age).to.eql(33);\r\n    pm.expect(response.username).to.eql(\"felipeqa_invalid\");\r\n});\r\n\r\npm.test(\"Tempo de resposta deve ser menor que 2500ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(2500);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"firstName\": \"Felipe\",\r\n  \"lastName\": \"QA\",\r\n  \"age\": 33,\r\n  \"email\": \"email-invalido\",\r\n  \"username\": \"felipeqa_invalid\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/add",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CT23 - Buscar usuários sem resultado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code deve ser 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Resposta deve ser JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Busca sem resultado deve retornar lista vazia\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response).to.have.property(\"users\");\r\n    pm.expect(response.users).to.be.an(\"array\");\r\n    pm.expect(response.users.length).to.eql(0);\r\n});\r\n\r\npm.test(\"Total de resultados deve ser zero\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response.total).to.eql(0);\r\n});\r\n\r\npm.test(\"Limite retornado deve ser zero\", function () {\r\n    const response = pm.response.json();\r\n\r\n    pm.expect(response.limit).to.eql(0);\r\n});\r\n\r\npm.test(\"Tempo de resposta deve ser menor que 2000ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(2000);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/search?q=usuarioquenaoexiste999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "usuarioquenaoexiste999"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
