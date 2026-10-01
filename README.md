@@ -56,6 +56,14 @@ A automação possui **23 cenários**, organizados por domínio.
 - CT06 - Atualizar produto
 - CT07 - Excluir produto
 
+### Authentication
+
+- CT08 - Login válido
+- CT09 - Login inválido
+- CT10 - Login sem senha
+- CT11 - Validar usuário autenticado
+- CT12 - Token inválido
+
 ### Users
 
 - CT13 - Listar usuários
@@ -65,14 +73,6 @@ A automação possui **23 cenários**, organizados por domínio.
 - CT17 - Criar usuário
 - CT18 - Atualizar usuário
 - CT19 - Excluir usuário
-
-### Authentication
-
-- CT08 - Login válido
-- CT09 - Login inválido
-- CT10 - Login sem senha
-- CT11 - Validar usuário autenticado
-- CT12 - Token inválido
 
 ### Negative Scenarios
 
@@ -107,7 +107,7 @@ A suíte contempla validações de:
 
 ## Dados dinâmicos
 
-Alguns cenários utilizam geração dinâmica de dados através de scripts de **Before Request**.
+Alguns cenários utilizam geração dinâmica de dados através de **Pre-request Scripts**.
 
 Exemplos:
 
